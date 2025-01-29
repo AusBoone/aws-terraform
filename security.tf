@@ -30,3 +30,27 @@ resource "aws_security_group" "web_sg" {
     Name = "web-sg"
   }
 }
+
+# IAM Role for EC2
+resource "aws_iam_role" "web_role" {
+  name = "web_role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+        Action = "sts:AssumeRole"
+      }
+    ]
+  })
+}
+
+# IAM Instance Profile for EC2
+resource "aws_iam_instance_profile" "web_profile" {
+  name = "web_profile"
+  role = aws_iam_role.web_role.name
+}
